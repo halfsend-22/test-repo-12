@@ -1,0 +1,39 @@
+# Behaviour-test bot-role probe shim (pkg/behaviourtest/steps/bot_role_probe.go).
+# Pushed to a temporary branch of the leased test repository; scenario
+# cleanup deletes the branch.
+name: bot-role-probe-d40e3def
+
+on:
+  push:
+    branches: ['behaviour/bot-role-probe-d40e3def']
+
+permissions: {}
+
+jobs:
+  # Lookup of the registered review bot: must be recognized.
+  control:
+    permissions:
+      contents: read
+      id-token: write
+    uses: halfsend-22/test-repo-12-mint-host/.github/workflows/bot-role-probe.yml@main
+    with:
+      mint_url: ${{ vars.FULLSEND_MINT_URL }}
+      actor_login: 'fullsend-test-review[bot]'
+      repo: 'halfsend-22/test-repo-12'
+      mode: 'lookup'
+      claimed_role: ''
+      artifact_name: 'bot-role-probe-control'
+
+  # The lookup under test.
+  subject:
+    permissions:
+      contents: read
+      id-token: write
+    uses: halfsend-22/test-repo-12-mint-host/.github/workflows/bot-role-probe.yml@main
+    with:
+      mint_url: ${{ vars.FULLSEND_MINT_URL }}
+      actor_login: 'fullsend-ai-e2e[bot]'
+      repo: 'halfsend-22/test-repo-12'
+      mode: 'lookup'
+      claimed_role: 'review'
+      artifact_name: 'bot-role-probe-subject'
